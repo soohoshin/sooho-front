@@ -35,17 +35,30 @@ const useAsync = (method, url, skip = false, data = {}, deps = []) => {
     error: null,
   });
   const env = process.env.REACT_APP_ENV || "DEV";
-  const [defalutUrl, setDefalutUrl] = useState("http://localhost:9981");
+  let defalutUrl = "";
+  if (env === "PROD") {
+    defalutUrl =
+      "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981";
+  } else {
+    defalutUrl = "http://localhost:9981";
+  }
+
+  // const [defalutUrl, setDefalutUrl] = useState("http://localhost:9981");
+  // useEffect(() => {
+  //   console.log("env!!!!!!", env);
+  //   if (env === "PROD") {
+  //     setDefalutUrl(
+  //       "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981/"
+  //     );
+  //   } else {
+  //     setDefalutUrl("http://localhost:9981");
+  //   }
+  //   console.log(defalutUrl);
+  // }, [env]);
+
   useEffect(() => {
-    if (env === "PROD") {
-      setDefalutUrl(
-        "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981/"
-      );
-    } else {
-      setDefalutUrl("http://localhost:9981");
-    }
     console.log(defalutUrl);
-  }, [env]);
+  }, [defalutUrl]);
 
   const fetchData = useCallback(
     async (getData = data) => {
@@ -76,7 +89,7 @@ const useAsync = (method, url, skip = false, data = {}, deps = []) => {
         console.log(e);
       }
     },
-    [data, method, url, value]
+    [data, method, url, value, defalutUrl]
   );
 
   useEffect(() => {
