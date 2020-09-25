@@ -34,7 +34,7 @@ const ProductDetail = ({ match, history }) => {
   useEffect(() => {
     if (env === "PROD") {
       setDefalutUrl(
-        "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981/"
+        "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981"
       );
     } else {
       setDefalutUrl("http://localhost:9981");

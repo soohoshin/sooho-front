@@ -35,6 +35,7 @@ const useAsync = (method, url, skip = false, data = {}, deps = []) => {
     error: null,
   });
   const env = process.env.REACT_APP_ENV || "DEV";
+  console.log("쫌!!", process.env.REACT_APP_ENV);
   let defalutUrl = "";
   if (env === "PROD") {
     defalutUrl =
@@ -48,7 +49,7 @@ const useAsync = (method, url, skip = false, data = {}, deps = []) => {
   //   console.log("env!!!!!!", env);
   //   if (env === "PROD") {
   //     setDefalutUrl(
-  //       "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981/"
+  //       "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981"
   //     );
   //   } else {
   //     setDefalutUrl("http://localhost:9981");
