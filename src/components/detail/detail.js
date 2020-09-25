@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { withRouter } from "react-router-dom";
 import useAsync from "../../api/api";
@@ -8,28 +8,39 @@ import axios from "axios";
 const ProductDetail = ({ match, history }) => {
   const { productId } = match.params;
   const { register, handleSubmit, errors } = useForm();
+  const env = process.env.REACT_APP_ENV || "DEV";
+  const [defalutUrl, setDefalutUrl] = useState();
 
-  const [state, refetch] = useAsync(
-    "get",
-    `http://localhost:9981/api/data/${productId}`
-  );
-  const { loading, data, error } = state;
+  const [productState] = useAsync("get", `/api/data/${productId}`);
+  const { loading, data, error } = productState;
 
+  const [commentState, refetch] = useAsync("post", "/api/comment", true);
   const onSubmit = async (data) => {
-    const responsive = await axios.post(
-      "http://localhost:9981/api/comment",
-      data
-    );
-
-    console.log("전송 !!", responsive.data);
-    if (responsive.data.success) {
-      alert("complete");
-      history.push("/product");
-    } else {
-      alert(responsive.data.reason);
-    }
+    const userData = refetch(data);
   };
 
+  useEffect(() => {
+    console.log(commentState);
+    if (commentState.data) {
+      if (commentState.data.success) {
+        alert("complete");
+        history.push("/product");
+      } else {
+        alert(commentState.data.message);
+      }
+    }
+  }, [commentState]);
+
+  useEffect(() => {
+    if (env === "PROD") {
+      setDefalutUrl(
+        "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981/"
+      );
+    } else {
+      setDefalutUrl("http://localhost:9981");
+    }
+    console.log(defalutUrl);
+  }, [env]);
   if (loading) return <div>loading</div>;
   if (error) return <div>error!!!!!!!!!!!!!</div>;
   if (!data) return null;
@@ -51,7 +62,7 @@ const ProductDetail = ({ match, history }) => {
         <div className="img">
           <img
             style={{ width: "100%" }}
-            src={`http://localhost:9981/${data.productImg}`}
+            src={`${defalutUrl}/${data.productImg}`}
             alt="productImg"
           />
         </div>

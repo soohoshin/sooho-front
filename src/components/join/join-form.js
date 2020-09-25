@@ -1,21 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import axios from "axios";
 import styled, { css } from "styled-components";
 import { withRouter } from "react-router-dom";
+import useAsync from "../../api/api";
 
 const JoinForm = ({ history }) => {
   const { register, handleSubmit, errors } = useForm();
+  const [state, refetch] = useAsync("post", "/api/join", true);
   const onSubmit = async (data) => {
-    const result = await axios.post("http://localhost:9981/api/join", data);
-    console.log(result);
-    if (result.data.success) {
-      alert("complete");
-      history.push("/login");
-    } else {
-      alert(result.data.message);
-    }
+    const userData = refetch(data);
   };
+
+  useEffect(() => {
+    console.log(state);
+    if (state.data) {
+      if (state.data.success) {
+        alert("complete");
+        history.push("/login");
+      } else {
+        alert(state.data.message);
+      }
+    }
+  }, [state]);
+
   console.log(errors);
   return (
     <JoinFormBox onSubmit={handleSubmit(onSubmit)}>

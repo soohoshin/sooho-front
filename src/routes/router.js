@@ -13,10 +13,7 @@ import MusicPlayer from "../components/musicplayer/musicplayer";
 const Routes = () => {
   const setLogin = useLogin();
   const [value, updateCookie, deleteCookie] = useCookie("user");
-  const [state, refetch] = useAsync(
-    "get",
-    "http://localhost:9981/api/userdata"
-  );
+  const [state, refetch] = useAsync("get", "/api/userdata");
   const { loading, data: user, error } = state;
 
   useEffect(() => {

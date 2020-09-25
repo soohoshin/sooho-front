@@ -7,10 +7,9 @@ import { withRouter } from "react-router-dom";
 
 const List = ({ history }) => {
   //   api test
-  const [state, refetch] = useAsync(
-    "get",
-    "http://localhost:9981/api/data/all"
-  );
+  const [state, refetch] = useAsync("get", "/api/data/all");
+  const env = process.env.REACT_APP_ENV || "DEV";
+  const [defalutUrl, setDefalutUrl] = useState();
   const { loading, data, error } = state;
 
   useEffect(() => {
@@ -19,6 +18,18 @@ const List = ({ history }) => {
       history.push("/");
     }
   }, [error, history]);
+
+  useEffect(() => {
+    if (env === "PROD") {
+      setDefalutUrl(
+        "http://ec2-3-133-112-140.us-east-2.compute.amazonaws.com:9981/"
+      );
+    } else {
+      setDefalutUrl("http://localhost:9981");
+    }
+    console.log(defalutUrl);
+  }, [env]);
+
   if (loading) return <div>loading</div>;
   if (error) return <div>error!!!!!!!!!!!!!</div>;
   if (!data) return null;
@@ -43,11 +54,13 @@ const List = ({ history }) => {
                 <span>{product.description}</span>
               </div>
               <div>
-                <img
-                  style={{ width: "200px" }}
-                  src={`http://localhost:9981/${product.productImg}`}
-                  alt="productImg"
-                />
+                {defalutUrl && (
+                  <img
+                    style={{ width: "200px" }}
+                    src={`${defalutUrl}/${product.productImg}`}
+                    alt="productImg"
+                  />
+                )}
               </div>
               <div>
                 <span style={{ margin: "10px", fontWeight: "bold" }}>
